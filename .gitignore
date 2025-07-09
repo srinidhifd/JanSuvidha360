@@ -64,3 +64,15 @@ temp/
 # Build outputs
 *.tgz
 *.tar.gz
+
+# Lock files (exclude package-lock.json to avoid large file warnings)
+package-lock.json
+yarn.lock
+
+# Workspace specific ignores
+backend/node_modules/
+frontend/node_modules/
+backend/dist/
+frontend/build/
+backend/.env
+frontend/.env
