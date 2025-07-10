@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { authAPI } from '../services/api';
@@ -12,8 +12,10 @@ const Login: React.FC = () => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const [autoFilledOtp, setAutoFilledOtp] = useState('');
+  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const otpSectionRef = useRef<HTMLDivElement>(null);
 
   // Demo phone numbers for testing
   const demoNumbers = [
@@ -31,6 +33,24 @@ const Login: React.FC = () => {
     }
   }, [countdown]);
 
+  // Auto-focus OTP input when it becomes visible
+  useEffect(() => {
+    if (isOtpSent && otpSectionRef.current) {
+      // Smooth scroll to OTP section
+      setTimeout(() => {
+        otpSectionRef.current?.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        });
+        // Focus the OTP input
+        const otpInput = document.getElementById('otp') as HTMLInputElement;
+        if (otpInput) {
+          otpInput.focus();
+        }
+      }, 100);
+    }
+  }, [isOtpSent]);
+
   const handleSendOTP = async () => {
     if (!phoneNumber.trim()) {
       toast.error('Please enter your phone number');
@@ -46,22 +66,49 @@ const Login: React.FC = () => {
     try {
       const response = await authAPI.sendOTP(phoneNumber);
       if (response.success) {
-        setIsOtpSent(true);
-        setCountdown(30);
+        // Show success animation
+        setShowSuccessAnimation(true);
         
-        // Auto-fill OTP for demo
-        const generatedOtp = response.data?.otp || '123456';
-        setAutoFilledOtp(generatedOtp);
-        setOtp(generatedOtp);
-        
-        toast.success(`OTP sent! Demo OTP: ${generatedOtp}`, {
-          duration: 8000,
-          style: {
-            background: '#10b981',
-            color: 'white',
-            fontWeight: 'bold'
-          }
-        });
+        // Set OTP sent state after a brief delay for better UX
+        setTimeout(() => {
+          setIsOtpSent(true);
+          setCountdown(30);
+          setShowSuccessAnimation(false);
+          
+          // Auto-fill OTP for demo
+          const generatedOtp = response.data?.otp || '123456';
+          setAutoFilledOtp(generatedOtp);
+          setOtp(generatedOtp);
+          
+          // Show success toast with clear next steps
+          toast.success(
+            `✅ OTP sent successfully!\n📱 Check the OTP section below\n🔢 Demo OTP: ${generatedOtp}`, 
+            {
+              duration: 6000,
+              style: {
+                background: '#10b981',
+                color: 'white',
+                fontWeight: 'bold',
+                fontSize: '14px',
+                lineHeight: '1.4',
+                whiteSpace: 'pre-line'
+              }
+            }
+          );
+          
+          // Additional notification toast
+          setTimeout(() => {
+            toast('👇 Please scroll down to enter OTP', {
+              icon: '👀',
+              duration: 3000,
+              style: {
+                background: '#3b82f6',
+                color: 'white',
+                fontWeight: 'bold'
+              }
+            });
+          }, 1000);
+        }, 1500);
       } else {
         toast.error(response.message || 'Failed to send OTP');
       }
@@ -82,11 +129,22 @@ const Login: React.FC = () => {
     setIsVerifying(true);
     try {
       await login(phoneNumber, otp);
-      // Remove duplicate toast - navigation will handle success feedback
-      navigate('/dashboard');
+      toast.success('✅ Login successful! Redirecting to dashboard...', {
+        duration: 2000,
+        style: {
+          background: '#10b981',
+          color: 'white',
+          fontWeight: 'bold'
+        }
+      });
+      
+      // Slight delay for better UX
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1000);
     } catch (error) {
       console.error('OTP verification error:', error);
-      toast.error('Verification failed. Please try again.');
+      toast.error('❌ Verification failed. Please check your OTP and try again.');
     } finally {
       setIsVerifying(false);
     }
@@ -97,12 +155,56 @@ const Login: React.FC = () => {
     setIsOtpSent(false);
     setOtp('');
     setAutoFilledOtp('');
+    setShowSuccessAnimation(false);
   };
 
   const handleResendOTP = async () => {
     if (countdown > 0) return;
+    
+    toast.loading('Resending OTP...', { id: 'resend-otp' });
     await handleSendOTP();
+    toast.dismiss('resend-otp');
   };
+
+  // Progress indicator component
+  const ProgressIndicator = () => (
+    <div className="flex items-center justify-center mb-8">
+      <div className="flex items-center space-x-4">
+        {/* Step 1 - Phone Number */}
+        <div className="flex items-center">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
+            !isOtpSent ? 'bg-blue-600 text-white' : 'bg-green-500 text-white'
+          }`}>
+            {!isOtpSent ? '1' : '✓'}
+          </div>
+          <span className={`ml-2 text-sm font-medium ${
+            !isOtpSent ? 'text-blue-600' : 'text-green-600'
+          }`}>
+            Phone Number
+          </span>
+        </div>
+        
+        {/* Connector */}
+        <div className={`w-8 h-0.5 transition-all duration-300 ${
+          isOtpSent ? 'bg-green-500' : 'bg-gray-300'
+        }`}></div>
+        
+        {/* Step 2 - OTP Verification */}
+        <div className="flex items-center">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
+            isOtpSent ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-500'
+          }`}>
+            2
+          </div>
+          <span className={`ml-2 text-sm font-medium ${
+            isOtpSent ? 'text-blue-600' : 'text-gray-500'
+          }`}>
+            OTP Verification
+          </span>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden">
@@ -189,25 +291,52 @@ const Login: React.FC = () => {
           <div className="lg:col-span-2">
             <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50 p-8 lg:p-12 hover:bg-white/90 transition-all duration-200">
               
-              {/* Login Header */}
-              <div className="text-center mb-8">
-                <div className="flex justify-center mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
-                    <span className="text-white text-2xl">🔐</span>
+              {/* Progress Indicator */}
+              <ProgressIndicator />
+              
+              {/* Success Animation */}
+              {showSuccessAnimation && (
+                <div className="text-center mb-6">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4 animate-pulse">
+                    <svg className="w-8 h-8 text-green-600 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
                   </div>
+                  <p className="text-green-600 font-semibold text-lg">Sending OTP...</p>
+                  <p className="text-gray-600 text-sm">Please wait while we send the verification code</p>
                 </div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                  Welcome Back
-                </h2>
-                <p className="text-gray-600 text-lg">
-                  Sign in to access your government schemes dashboard
-                </p>
-              </div>
+              )}
+              
+              {/* Login Header */}
+              {!showSuccessAnimation && (
+                <div className="text-center mb-8">
+                  <div className="flex justify-center mb-6">
+                    <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg transition-all duration-500 ${
+                      isOtpSent 
+                        ? 'bg-gradient-to-br from-green-500 to-emerald-600' 
+                        : 'bg-gradient-to-br from-blue-500 to-indigo-600'
+                    }`}>
+                      <span className="text-white text-2xl">
+                        {isOtpSent ? '📱' : '🔐'}
+                      </span>
+                    </div>
+                  </div>
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                    {isOtpSent ? 'Verify Your Phone' : 'Welcome Back'}
+                  </h2>
+                  <p className="text-gray-600 text-lg">
+                    {isOtpSent 
+                      ? 'We\'ve sent a verification code to your phone'
+                      : 'Sign in to access your government schemes dashboard'
+                    }
+                  </p>
+                </div>
+              )}
 
               {/* Login Form */}
               <div className="space-y-6">
                 {/* Phone Number Input */}
-                <div>
+                <div className={`transition-all duration-500 ${isOtpSent ? 'opacity-50' : 'opacity-100'}`}>
                   <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-2">
                     Phone Number
                   </label>
@@ -222,29 +351,51 @@ const Login: React.FC = () => {
                   />
                 </div>
 
-                {/* OTP Input */}
+                {/* OTP Input Section */}
                 {isOtpSent && (
-                  <div>
-                    <label htmlFor="otp" className="block text-sm font-medium text-gray-700 mb-2">
-                      Enter OTP
-                    </label>
-                    <input
-                      id="otp"
-                      type="text"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value)}
-                      className="w-full px-4 py-4 text-lg border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-center font-mono"
-                      placeholder="Enter 6-digit OTP"
-                      maxLength={6}
-                    />
-                    {autoFilledOtp && (
-                      <div className="mt-3 p-3 bg-green-50 rounded-lg">
-                        <p className="text-sm text-green-700 flex items-center">
-                          <span className="w-4 h-4 bg-green-500 rounded-full mr-2"></span>
-                          Demo OTP has been auto-filled: <strong className="ml-1">{autoFilledOtp}</strong>
-                        </p>
+                  <div 
+                    ref={otpSectionRef}
+                    className="animate-fadeIn border-2 border-blue-200 rounded-xl p-6 bg-blue-50/30 backdrop-blur-sm"
+                  >
+                    {/* OTP Section Header */}
+                    <div className="text-center mb-4">
+                      <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-3">
+                        <span className="text-blue-600 text-xl">📧</span>
                       </div>
-                    )}
+                      <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                        Enter Verification Code
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        We've sent a 6-digit code to <span className="font-medium text-blue-600">{phoneNumber}</span>
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="otp" className="block text-sm font-medium text-gray-700 mb-2">
+                        OTP Code
+                      </label>
+                      <input
+                        id="otp"
+                        type="text"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value)}
+                        className="w-full px-4 py-4 text-lg border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-center font-mono bg-white"
+                        placeholder="Enter 6-digit OTP"
+                        maxLength={6}
+                      />
+                      {autoFilledOtp && (
+                        <div className="mt-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                          <p className="text-sm text-green-700 flex items-center">
+                            <span className="w-4 h-4 bg-green-500 rounded-full mr-2 flex items-center justify-center">
+                              <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9 12l2 2 4-4"/>
+                              </svg>
+                            </span>
+                            Demo OTP has been auto-filled: <strong className="ml-1 font-mono bg-green-100 px-2 py-1 rounded">{autoFilledOtp}</strong>
+                          </p>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
 
@@ -253,7 +404,7 @@ const Login: React.FC = () => {
                   {!isOtpSent ? (
                     <button
                       onClick={handleSendOTP}
-                      disabled={isLoading || !phoneNumber.trim()}
+                      disabled={isLoading || !phoneNumber.trim() || showSuccessAnimation}
                       className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 px-6 rounded-xl font-semibold text-lg transition-all duration-200 transform hover:scale-[1.02] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                     >
                       {isLoading ? (
