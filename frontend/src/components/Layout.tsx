@@ -15,6 +15,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { name: 'Dashboard', path: '/dashboard' },
     { name: 'Schemes', path: '/schemes' },
     { name: 'Documents', path: '/documents' },
+    { name: 'Profile', path: '/profile' },
   ];
 
   const isActive = (path: string) => {
@@ -60,6 +61,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     {item.name === 'Dashboard' && '📊'}
                     {item.name === 'Schemes' && '📋'}
                     {item.name === 'Documents' && '📄'}
+                    {item.name === 'Profile' && '👤'}
                   </span>
                   {item.name}
                 </Link>
@@ -120,6 +122,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                       {item.name === 'Dashboard' && '📊'}
                       {item.name === 'Schemes' && '📋'}
                       {item.name === 'Documents' && '📄'}
+                      {item.name === 'Profile' && '👤'}
                     </span>
                     {item.name}
                   </Link>
@@ -187,6 +190,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <ul className="space-y-2">
                 <li><Link to="/schemes" className="text-gray-400 hover:text-white transition-colors text-sm">Browse Schemes</Link></li>
                 <li><Link to="/documents" className="text-gray-400 hover:text-white transition-colors text-sm">Documents</Link></li>
+                <li><Link to="/profile" className="text-gray-400 hover:text-white transition-colors text-sm">Profile</Link></li>
                 <li><a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">Application Status</a></li>
               </ul>
             </div>

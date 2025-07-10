@@ -126,7 +126,7 @@ const LandingPage: React.FC = () => {
                   in One Secure Place
                 </span>
               </h1>
-            </div>
+              </div>
             
             {/* Enhanced subheading */}
             <div className="max-w-3xl mx-auto mb-10">

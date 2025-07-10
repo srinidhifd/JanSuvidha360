@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Schemes from './pages/Schemes';
 import Documents from './pages/Documents';
+import Profile from './pages/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
 import SchemeDetails from './pages/SchemeDetails';
 
@@ -26,6 +27,7 @@ const App: React.FC = () => {
                     <Route path="/schemes" element={<Schemes />} />
                     <Route path="/schemes/:id" element={<SchemeDetails />} />
                     <Route path="/documents" element={<Documents />} />
+                    <Route path="/profile" element={<Profile />} />
                     <Route path="/" element={<Dashboard />} />
                   </Routes>
                 </Layout>

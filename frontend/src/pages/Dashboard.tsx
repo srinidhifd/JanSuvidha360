@@ -67,45 +67,7 @@ const Dashboard: React.FC = () => {
     ? Math.round((stats.eligible / stats.total) * 100)
     : 0;
 
-  // Profile sections for the Profile tab
-  const profileSections = [
-    {
-      title: 'Personal Information',
-      icon: '👤',
-      items: [
-        { label: 'Full Name', value: user?.name, icon: '🏷️' },
-        { label: 'Phone Number', value: user?.phoneNumber, icon: '📱' },
-        { label: 'Date of Birth', value: user?.dateOfBirth, icon: '🎂' },
-        { label: 'Age', value: user?.age ? `${user.age} years` : 'Not specified', icon: '📅' },
-        { label: 'Gender', value: user?.gender ? user.gender.charAt(0).toUpperCase() + user.gender.slice(1) : 'Not specified', icon: '⚧️' },
-      ]
-    },
-    {
-      title: 'Location Details',
-      icon: '📍',
-      items: [
-        { label: 'State', value: user?.state, icon: <img src="/jansuvidha360-logo.png" alt="JanSuvidha360 Logo" className="w-4 h-4 object-contain jansuvidha-logo" /> },
-        { label: 'City', value: user?.city, icon: '🏙️' },
-        { label: 'Address', value: user?.address, icon: '🏠' },
-      ]
-    },
-    {
-      title: 'Professional Information',
-      icon: '💼',
-      items: [
-        { label: 'Occupation', value: user?.occupation ? user.occupation.charAt(0).toUpperCase() + user.occupation.slice(1) : 'Not specified', icon: '👔' },
-        { label: 'Annual Income', value: user?.annualIncome ? `₹${user.annualIncome.toLocaleString()}` : 'Not specified', icon: '💰' },
-      ]
-    },
-    {
-      title: 'Government Documents',
-      icon: '📄',
-      items: [
-        { label: 'Aadhaar Number', value: user?.aadhaarNumber ? `**** **** ${user.aadhaarNumber.slice(-4)}` : 'Not provided', icon: '🆔' },
-        { label: 'PAN Number', value: user?.panNumber || 'Not provided', icon: '💳' },
-      ]
-    }
-  ];
+
 
   // Activity stats for overview
   const activityStats = [
@@ -265,11 +227,11 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Navigation Tabs */}
+              {/* Navigation Tabs */}
         <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50 overflow-hidden hover:bg-white/90 transition-all duration-300">
           <div className="border-b border-gray-200/50">
           <nav className="flex">
-            {['overview', 'profile', 'activity', 'settings'].map((tab) => (
+            {['overview', 'activity', 'settings'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -280,7 +242,6 @@ const Dashboard: React.FC = () => {
                 }`}
               >
                 {tab === 'overview' && '📊 Overview'}
-                {tab === 'profile' && '👤 Profile'}
                 {tab === 'activity' && '📈 Activity'}
                 {tab === 'settings' && '⚙️ Settings'}
               </button>
@@ -310,6 +271,115 @@ const Dashboard: React.FC = () => {
                 </div>
               </div>
 
+              {/* Analytics Charts */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Eligibility Chart */}
+                <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-200/50">
+                  <h4 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                    <span className="text-xl mr-2">🎯</span>
+                    Eligibility Distribution
+                  </h4>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+                        <span className="text-sm text-gray-600">Eligible</span>
+                      </div>
+                      <span className="text-sm font-bold text-gray-900">{stats.eligible}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="h-2 bg-gradient-to-r from-green-400 to-green-600 rounded-full transition-all duration-1000"
+                        style={{ width: `${stats.total > 0 ? (stats.eligible / stats.total) * 100 : 0}%` }}
+                      ></div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+                        <span className="text-sm text-gray-600">Not Eligible</span>
+                      </div>
+                      <span className="text-sm font-bold text-gray-900">{stats.ineligible}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="h-2 bg-gradient-to-r from-red-400 to-red-600 rounded-full transition-all duration-1000"
+                        style={{ width: `${stats.total > 0 ? (stats.ineligible / stats.total) * 100 : 0}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Application Status Chart */}
+                <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-200/50">
+                  <h4 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                    <span className="text-xl mr-2">📈</span>
+                    Application Progress
+                  </h4>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
+                        <span className="text-sm text-gray-600">Applied</span>
+                      </div>
+                      <span className="text-sm font-bold text-gray-900">12</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="h-2 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full transition-all duration-1000" style={{ width: '52%' }}></div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+                        <span className="text-sm text-gray-600">Approved</span>
+                      </div>
+                      <span className="text-sm font-bold text-gray-900">8</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="h-2 bg-gradient-to-r from-green-400 to-green-600 rounded-full transition-all duration-1000" style={{ width: '35%' }}></div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-4 h-4 bg-yellow-500 rounded-full"></div>
+                        <span className="text-sm text-gray-600">Pending</span>
+                      </div>
+                      <span className="text-sm font-bold text-gray-900">3</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="h-2 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full transition-all duration-1000" style={{ width: '13%' }}></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Monthly Activity Chart */}
+              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-200/50">
+                <h4 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                  <span className="text-xl mr-2">📅</span>
+                  Monthly Activity
+                </h4>
+                <div className="flex items-end space-x-2 h-40">
+                  {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'].map((month, index) => {
+                    const heights = [60, 80, 45, 90, 75, 95];
+                    const values = [3, 4, 2, 5, 4, 6];
+                    return (
+                      <div key={month} className="flex-1 flex flex-col items-center">
+                        <div className="w-full bg-gray-100 rounded-t-lg relative overflow-hidden">
+                          <div 
+                            className="w-full bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-lg transition-all duration-1000 flex items-end justify-center"
+                            style={{ height: `${heights[index]}%` }}
+                          >
+                            <span className="text-white text-xs font-bold mb-1">{values[index]}</span>
+                          </div>
+                        </div>
+                        <span className="text-xs text-gray-600 mt-2">{month}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
               {/* Quick Actions */}
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
@@ -333,14 +403,13 @@ const Dashboard: React.FC = () => {
                     <p className="text-sm text-green-700">View and manage your government documents</p>
                   </Link>
                   
-                  <button className="group p-6 bg-gradient-to-r from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 rounded-xl transition-all duration-300 text-left border border-purple-200 hover:border-purple-300 transform hover:scale-105"
-                    onClick={() => setActiveTab('profile')}>
+                  <Link to="/profile" className="group p-6 bg-gradient-to-r from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 rounded-xl transition-all duration-300 text-left border border-purple-200 hover:border-purple-300 transform hover:scale-105">
                     <div className="flex items-center mb-3">
-                      <span className="text-3xl mr-3">📝</span>
-                      <h4 className="font-bold text-purple-900">Update Profile</h4>
+                      <span className="text-3xl mr-3">👤</span>
+                      <h4 className="font-bold text-purple-900">View Profile</h4>
                     </div>
-                    <p className="text-sm text-purple-700">Keep your information current and complete</p>
-                  </button>
+                    <p className="text-sm text-purple-700">Manage your personal information and profile</p>
+                  </Link>
                 </div>
               </div>
 
@@ -392,30 +461,6 @@ const Dashboard: React.FC = () => {
                   )}
                 </div>
               </div>
-            </div>
-          )}
-
-          {activeTab === 'profile' && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {profileSections.map((section, index) => (
-                  <div key={index} className="bg-gray-50/80 backdrop-blur-sm rounded-xl p-6 border border-gray-200/50 hover:bg-gray-50/90 transition-all duration-300">
-                  <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center">
-                    <span className="text-2xl mr-3">{section.icon}</span>
-                    {section.title}
-                  </h3>
-                  <div className="space-y-4">
-                    {section.items.map((item, itemIndex) => (
-                        <div key={itemIndex} className="flex items-center justify-between py-3 px-4 bg-white/80 backdrop-blur-sm rounded-lg shadow-sm hover:bg-white transition-all duration-200">
-                        <div className="flex items-center space-x-3">
-                          <span className="text-lg">{item.icon}</span>
-                          <span className="text-sm font-medium text-gray-600">{item.label}</span>
-                        </div>
-                        <span className="text-sm text-gray-900 font-medium">{item.value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
             </div>
           )}
 
