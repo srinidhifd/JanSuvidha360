@@ -8,18 +8,29 @@ import Loading from '../components/Loading';
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const [schemes, setSchemes] = useState<Scheme[]>([]);
+  const [eligibilityResults, setEligibilityResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('overview');
 
   useEffect(() => {
-    const fetchSchemes = async () => {
+    const fetchData = async () => {
       try {
-        const response = await schemesAPI.getAllSchemes();
-        if (response.success) {
-          setSchemes(response.data || []);
-        } else {
-          setError(response.message || 'Failed to load schemes');
+        setLoading(true);
+        
+        // Try to fetch eligibility results first (requires auth)
+        try {
+          const eligibilityResponse = await schemesAPI.getEligibilityResults();
+          if (eligibilityResponse.success) {
+            setEligibilityResults(eligibilityResponse.data || []);
+          }
+        } catch (eligibilityError) {
+          console.log('User not authenticated for eligibility, falling back to basic schemes');
+          // Fall back to basic schemes view
+          const schemesResponse = await schemesAPI.getAllSchemes();
+          if (schemesResponse.success) {
+            setSchemes(schemesResponse.data || []);
+          }
         }
       } catch (err) {
         setError('Network error. Please try again.');
@@ -29,17 +40,31 @@ const Dashboard: React.FC = () => {
       }
     };
 
-    fetchSchemes();
+    fetchData();
   }, []);
 
   if (loading) return <Loading />;
 
-  const eligibleSchemes = schemes.filter(scheme => 
-    scheme.status === 'active' && scheme.category
-  );
+  // Get accurate eligibility data
+  const getEligibilityStats = () => {
+    if (eligibilityResults.length > 0) {
+      const total = eligibilityResults.length;
+      const eligible = eligibilityResults.filter(r => r.isEligible).length;
+      const ineligible = total - eligible;
+      const highMatch = eligibilityResults.filter(r => r.eligibilityScore >= 80).length;
+      
+      return { total, eligible, ineligible, highMatch };
+    } else {
+      // Fallback to basic scheme counting
+      const total = schemes.length;
+      const eligible = schemes.filter(scheme => scheme.status === 'active').length;
+      return { total, eligible, ineligible: total - eligible, highMatch: 0 };
+    }
+  };
 
-  const eligibilityScore = eligibleSchemes.length > 0 
-    ? Math.round((eligibleSchemes.length / schemes.length) * 100)
+  const stats = getEligibilityStats();
+  const eligibilityScore = stats.total > 0 
+    ? Math.round((stats.eligible / stats.total) * 100)
     : 0;
 
   // Profile sections for the Profile tab
@@ -159,7 +184,7 @@ const Dashboard: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Available Schemes</p>
-              <p className="text-3xl font-bold text-blue-600 mt-2">{schemes.length}</p>
+              <p className="text-3xl font-bold text-blue-600 mt-2">{stats.total}</p>
               <p className="text-sm text-gray-500 mt-1">Total schemes</p>
             </div>
             <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-2xl">
@@ -177,7 +202,7 @@ const Dashboard: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Eligible Schemes</p>
-              <p className="text-3xl font-bold text-green-600 mt-2">{eligibleSchemes.length}</p>
+              <p className="text-3xl font-bold text-green-600 mt-2">{stats.eligible}</p>
               <p className="text-sm text-gray-500 mt-1">You can apply</p>
             </div>
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-2xl">
@@ -326,20 +351,45 @@ const Dashboard: React.FC = () => {
                   Recommended For You
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {eligibleSchemes.slice(0, 4).map((scheme, index) => (
+                  {eligibilityResults.length > 0 ? (
+                    eligibilityResults
+                      .filter(result => result.isEligible)
+                      .slice(0, 4)
+                      .map((result, index) => (
+                        <div key={index} className="bg-gradient-to-r from-gray-50/80 to-gray-100/80 backdrop-blur-sm rounded-lg p-6 border border-gray-200/50 hover:from-gray-50/90 hover:to-gray-100/90 transition-all duration-300">
+                          <h4 className="font-bold text-gray-900 mb-2">{result.scheme.name}</h4>
+                          <p className="text-sm text-gray-600 mb-3">{result.scheme.description?.slice(0, 100)}...</p>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-xs bg-green-100/80 text-green-800 px-2 py-1 rounded-full">
+                                {result.scheme.category}
+                              </span>
+                              <span className="text-xs bg-blue-100/80 text-blue-800 px-2 py-1 rounded-full">
+                                {result.eligibilityScore.toFixed(2)}% match
+                              </span>
+                            </div>
+                            <Link to={`/schemes/${result.scheme.id}`} className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                              Learn More →
+                            </Link>
+                          </div>
+                        </div>
+                      ))
+                  ) : (
+                    schemes.slice(0, 4).map((scheme, index) => (
                       <div key={index} className="bg-gradient-to-r from-gray-50/80 to-gray-100/80 backdrop-blur-sm rounded-lg p-6 border border-gray-200/50 hover:from-gray-50/90 hover:to-gray-100/90 transition-all duration-300">
-                      <h4 className="font-bold text-gray-900 mb-2">{scheme.name}</h4>
-                      <p className="text-sm text-gray-600 mb-3">{scheme.description?.slice(0, 100)}...</p>
-                      <div className="flex items-center justify-between">
+                        <h4 className="font-bold text-gray-900 mb-2">{scheme.name}</h4>
+                        <p className="text-sm text-gray-600 mb-3">{scheme.description?.slice(0, 100)}...</p>
+                        <div className="flex items-center justify-between">
                           <span className="text-xs bg-green-100/80 text-green-800 px-2 py-1 rounded-full">
-                          {scheme.category}
-                        </span>
-                        <Link to={`/schemes/${scheme.id}`} className="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                          Learn More →
-                        </Link>
+                            {scheme.category}
+                          </span>
+                          <Link to={`/schemes/${scheme.id}`} className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                            Learn More →
+                          </Link>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
               </div>
             </div>

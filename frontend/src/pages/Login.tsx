@@ -289,7 +289,7 @@ const Login: React.FC = () => {
 
           {/* Main Login Form */}
           <div className="lg:col-span-2">
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50 p-8 lg:p-12 hover:bg-white/90 transition-all duration-200">
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50 p-6 lg:p-8 hover:bg-white/90 transition-all duration-200">
               
               {/* Progress Indicator */}
               <ProgressIndicator />
@@ -322,7 +322,7 @@ const Login: React.FC = () => {
                     </div>
                   </div>
                   <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                    {isOtpSent ? 'Verify Your Phone' : 'Welcome Back'}
+                    {isOtpSent ? 'Verify Your Phone' : 'Login'}
                   </h2>
                   <p className="text-gray-600 text-lg">
                     {isOtpSent 
