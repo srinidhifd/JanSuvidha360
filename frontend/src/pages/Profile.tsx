@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
+import { Icons } from '../components/ui/Icons';
+import UserProfileHeaderCard from '../components/UserProfileHeaderCard';
 
 const Profile: React.FC = () => {
   const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [activeSection, setActiveSection] = useState('personal');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<string>('');
 
   // Profile completion calculation
   const calculateProfileCompletion = () => {
@@ -20,60 +25,16 @@ const Profile: React.FC = () => {
 
   const profileCompletion = calculateProfileCompletion();
 
-  // Profile sections for the Profile page
-  const profileSections = [
-    {
-      id: 'personal',
-      title: 'Personal Information',
-      icon: '👤',
-      items: [
-        { label: 'Full Name', value: user?.name || 'Not specified', icon: '🏷️', required: true },
-        { label: 'Phone Number', value: user?.phoneNumber || 'Not specified', icon: '📱', required: true },
-        { label: 'Date of Birth', value: user?.dateOfBirth || 'Not specified', icon: '🎂', required: true },
-        { label: 'Age', value: user?.age ? `${user.age} years` : 'Not specified', icon: '📅', required: true },
-        { label: 'Gender', value: user?.gender ? user.gender.charAt(0).toUpperCase() + user.gender.slice(1) : 'Not specified', icon: '⚧️', required: true },
-        { label: 'Verification Status', value: user?.isVerified ? 'Verified' : 'Not verified', icon: '✅', required: false },
-      ]
-    },
-    {
-      id: 'location',
-      title: 'Location Details',
-      icon: '📍',
-      items: [
-        { label: 'State', value: user?.state || 'Not specified', icon: <img src="/jansuvidha360-logo.png" alt="JanSuvidha360 Logo" className="w-4 h-4 object-contain jansuvidha-logo" />, required: true },
-        { label: 'City', value: user?.city || 'Not specified', icon: '🏙️', required: true },
-        { label: 'Address', value: user?.address || 'Not specified', icon: '🏠', required: true },
-        { label: 'Profile Status', value: user?.profileCompleted ? 'Complete' : 'Incomplete', icon: '📋', required: false },
-      ]
-    },
-    {
-      id: 'professional',
-      title: 'Professional Information',
-      icon: '💼',
-      items: [
-        { label: 'Occupation', value: user?.occupation ? user.occupation.charAt(0).toUpperCase() + user.occupation.slice(1) : 'Not specified', icon: '👔', required: true },
-        { label: 'Annual Income', value: user?.annualIncome ? `₹${user.annualIncome.toLocaleString()}` : 'Not specified', icon: '💰', required: true },
-        { label: 'Employment Type', value: user?.occupation === 'salaried' ? 'Salaried Employee' : user?.occupation === 'self-employed' ? 'Self Employed' : user?.occupation === 'business' ? 'Business Owner' : 'Other', icon: '💼', required: false },
-      ]
-    },
-    {
-      id: 'documents',
-      title: 'Government Documents',
-      icon: '📄',
-      items: [
-        { label: 'Aadhaar Number', value: user?.aadhaarNumber ? `**** **** ${user.aadhaarNumber.slice(-4)}` : 'Not provided', icon: '🆔', required: true },
-        { label: 'PAN Number', value: user?.panNumber || 'Not provided', icon: '💳', required: true },
-        { label: 'Driving License', value: user?.documents?.drivingLicense?.number ? `**** ${user.documents.drivingLicense.number.slice(-4)}` : 'Not provided', icon: '🚗', required: false },
-        { label: 'Passport', value: user?.documents?.passport?.number ? `**** ${user.documents.passport.number.slice(-4)}` : 'Not provided', icon: '🛂', required: false },
-      ]
-    }
-  ];
-
+  // Enhanced sections including settings
   const sections = [
-    { id: 'personal', label: 'Personal Info', icon: '👤' },
-    { id: 'location', label: 'Location', icon: '📍' },
-    { id: 'professional', label: 'Professional', icon: '💼' },
-    { id: 'documents', label: 'Documents', icon: '📄' }
+    { id: 'personal', label: 'Personal Info', icon: Icons.User },
+    { id: 'location', label: 'Location', icon: Icons.Location },
+    { id: 'professional', label: 'Professional', icon: Icons.Briefcase },
+    { id: 'documents', label: 'Documents', icon: Icons.File },
+    { id: 'settings', label: 'Settings', icon: Icons.Settings },
+    { id: 'security', label: 'Security', icon: Icons.Shield },
+    { id: 'notifications', label: 'Notifications', icon: Icons.Bell },
+    { id: 'privacy', label: 'Privacy', icon: Icons.Lock }
   ];
 
   const getCompletionColor = (percentage: number) => {
@@ -88,6 +49,328 @@ const Profile: React.FC = () => {
     return 'bg-red-500';
   };
 
+  const handleSave = (section: string) => {
+    setSaveStatus(`${section} settings saved successfully!`);
+    setTimeout(() => setSaveStatus(''), 3000);
+  };
+
+  // --- Section Renderers ---
+  const renderPersonalSection = () => (
+    <div className="space-y-6">
+      <h3 className="text-lg font-semibold text-gray-900">Personal Information</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+          <div className="bg-gray-50 p-3 rounded-lg text-gray-900">{user?.name || '-'}</div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+          <div className="bg-gray-50 p-3 rounded-lg text-gray-900">{user?.dateOfBirth || '-'}</div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+          <div className="bg-gray-50 p-3 rounded-lg text-gray-900">{user?.gender || '-'}</div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+          <div className="bg-gray-50 p-3 rounded-lg text-gray-900">{user?.phoneNumber || '-'}</div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderLocationSection = () => (
+    <div className="space-y-6">
+      <h3 className="text-lg font-semibold text-gray-900">Location</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">State</label>
+          <div className="bg-gray-50 p-3 rounded-lg text-gray-900">{user?.state || '-'}</div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
+          <div className="bg-gray-50 p-3 rounded-lg text-gray-900">{user?.city || '-'}</div>
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+          <div className="bg-gray-50 p-3 rounded-lg text-gray-900">{user?.address || '-'}</div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderProfessionalSection = () => (
+    <div className="space-y-6">
+      <h3 className="text-lg font-semibold text-gray-900">Professional Details</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Occupation</label>
+          <div className="bg-gray-50 p-3 rounded-lg text-gray-900">{user?.occupation || '-'}</div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Annual Income</label>
+          <div className="bg-gray-50 p-3 rounded-lg text-gray-900">{user?.annualIncome || '-'}</div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderDocumentsSection = () => (
+    <div className="space-y-6">
+      <h3 className="text-lg font-semibold text-gray-900">Documents</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Aadhaar Number</label>
+          <div className="bg-gray-50 p-3 rounded-lg text-gray-900">{user?.aadhaarNumber || '-'}</div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">PAN Number</label>
+          <div className="bg-gray-50 p-3 rounded-lg text-gray-900">{user?.panNumber || '-'}</div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderSettingsSection = () => (
+    <div className="space-y-6">
+      <h3 className="text-lg font-semibold text-gray-900">App Settings</h3>
+      
+      <div className="space-y-4">
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h4 className="font-medium text-gray-900 mb-3">Appearance</h4>
+          <div className="space-y-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Theme</label>
+              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+                <option value="system">System</option>
+              </select>
+            </div>
+            <label className="flex items-center justify-between">
+              <span className="text-sm text-gray-700">Compact mode</span>
+              <input type="checkbox" className="text-blue-600" />
+            </label>
+          </div>
+        </div>
+
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h4 className="font-medium text-gray-900 mb-3">Language & Region</h4>
+          <div className="space-y-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
+              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option value="en">English</option>
+                <option value="hi">हिंदी (Hindi)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Timezone</label>
+              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
+                <option value="Asia/Mumbai">Asia/Mumbai (IST)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <button
+          onClick={() => handleSave('Settings')}
+          className="flex items-center space-x-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <Icons.Save className="w-4 h-4" />
+          <span>Save Settings</span>
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderSecuritySection = () => (
+    <div className="space-y-6">
+      <h3 className="text-lg font-semibold text-gray-900">Security Settings</h3>
+      
+      <div className="space-y-4">
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h4 className="font-medium text-gray-900 mb-3">Change Password</h4>
+          <div className="space-y-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? <Icons.EyeOff className="w-4 h-4" /> : <Icons.Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+              <input
+                type="password"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+                >
+                  {showConfirmPassword ? <Icons.EyeOff className="w-4 h-4" /> : <Icons.Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              onClick={() => handleSave('Password')}
+              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <Icons.Save className="w-4 h-4" />
+              <span>Update Password</span>
+            </button>
+          </div>
+        </div>
+
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h4 className="font-medium text-gray-900 mb-3">Two-Factor Authentication</h4>
+          <p className="text-sm text-gray-600 mb-4">
+            Add an extra layer of security to your account with two-factor authentication.
+          </p>
+          <button className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+            <Icons.Shield className="w-4 h-4" />
+            <span>Enable 2FA</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderNotificationsSection = () => (
+    <div className="space-y-6">
+      <h3 className="text-lg font-semibold text-gray-900">Notification Preferences</h3>
+      
+      <div className="space-y-4">
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h4 className="font-medium text-gray-900 mb-3">Delivery Methods</h4>
+          <div className="space-y-3">
+            {[
+              { key: 'emailNotifications', label: 'Email notifications', icon: Icons.Mail },
+              { key: 'smsNotifications', label: 'SMS notifications', icon: Icons.Phone },
+              { key: 'pushNotifications', label: 'Push notifications', icon: Icons.Bell }
+            ].map((item) => (
+              <label key={item.key} className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <item.icon className="w-4 h-4 text-gray-500" />
+                  <span className="text-sm text-gray-700">{item.label}</span>
+                </div>
+                <input type="checkbox" className="text-blue-600" defaultChecked />
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h4 className="font-medium text-gray-900 mb-3">Notification Types</h4>
+          <div className="space-y-3">
+            {[
+              { key: 'schemeUpdates', label: 'New scheme updates and announcements', icon: Icons.Bell },
+              { key: 'applicationStatus', label: 'Application status changes', icon: Icons.Shield },
+              { key: 'documentExpiry', label: 'Document expiry warnings', icon: Icons.AlertTriangle },
+              { key: 'reminderNotifications', label: 'Deadline and reminder notifications', icon: Icons.Clock }
+            ].map((item) => (
+              <label key={item.key} className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <item.icon className="w-4 h-4 text-gray-500" />
+                  <span className="text-sm text-gray-700">{item.label}</span>
+                </div>
+                <input type="checkbox" className="text-blue-600" defaultChecked />
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <button
+          onClick={() => handleSave('Notification')}
+          className="flex items-center space-x-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <Icons.Save className="w-4 h-4" />
+          <span>Save Notification Settings</span>
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderPrivacySection = () => (
+    <div className="space-y-6">
+      <h3 className="text-lg font-semibold text-gray-900">Privacy Settings</h3>
+      
+      <div className="space-y-4">
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h4 className="font-medium text-gray-900 mb-3">Profile Visibility</h4>
+          <div className="space-y-2">
+            {[
+              { value: 'public', label: 'Public - Anyone can view your profile' },
+              { value: 'private', label: 'Private - Only you can view your profile' },
+              { value: 'friends', label: 'Friends - Only approved contacts can view' }
+            ].map((option) => (
+              <label key={option.value} className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="profileVisibility"
+                  value={option.value}
+                  defaultChecked={option.value === 'private'}
+                  className="text-blue-600"
+                />
+                <span className="text-sm text-gray-700">{option.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h4 className="font-medium text-gray-900 mb-3">Data Usage</h4>
+          <div className="space-y-3">
+            {[
+              { key: 'allowDataSharing', label: 'Allow data sharing with government departments', icon: Icons.Database },
+              { key: 'allowAnalytics', label: 'Allow usage analytics for service improvement', icon: Icons.Shield },
+              { key: 'allowMarketing', label: 'Allow marketing communications', icon: Icons.Mail }
+            ].map((item) => (
+              <label key={item.key} className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <item.icon className="w-4 h-4 text-gray-500" />
+                  <span className="text-sm text-gray-700">{item.label}</span>
+                </div>
+                <input type="checkbox" className="text-blue-600" defaultChecked={item.key === 'allowAnalytics'} />
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <button
+          onClick={() => handleSave('Privacy')}
+          className="flex items-center space-x-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <Icons.Save className="w-4 h-4" />
+          <span>Save Privacy Settings</span>
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="space-y-8 min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 relative">
       {/* Background pattern */}
@@ -97,184 +380,56 @@ const Profile: React.FC = () => {
         </div>
       </div>
       
-      <div className="relative z-10 space-y-8">
-        {/* Enhanced Header */}
-        <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-2xl p-8 text-white shadow-2xl">
-          <div className="flex flex-col md:flex-row items-center justify-between">
-            <div className="flex items-center space-x-6 mb-6 md:mb-0">
-              <div className="relative">
-                <div className="w-24 h-24 bg-white bg-opacity-20 rounded-full flex items-center justify-center backdrop-blur-lg border-2 border-white border-opacity-30">
-                  <span className="text-3xl font-bold">
-                    {user?.name?.charAt(0) || 'U'}
-                  </span>
-                </div>
-                <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center border-2 border-white">
-                  <span className="text-white text-sm">✓</span>
-                </div>
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold mb-2">{user?.name || 'User'}</h1>
-                <p className="text-indigo-100 text-lg mb-2">
-                  Government Schemes Portal Member
-                </p>
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-1">
-                    <span className="text-sm">📍</span>
-                    <span className="text-indigo-200">{user?.city || 'City'}, {user?.state || 'State'}</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <span className="text-sm">🆔</span>
-                    <span className="text-indigo-200">ID: {user?.phoneNumber?.slice(-4) || 'XXXX'}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center backdrop-blur-lg border-2 border-white border-opacity-30 mx-auto mb-4">
-                <span className={`text-2xl font-bold ${getCompletionColor(profileCompletion)}`}>
-                  {profileCompletion}%
-                </span>
-              </div>
-              <div className="text-sm text-indigo-200">Profile Complete</div>
-            </div>
+      <UserProfileHeaderCard
+        name={user?.name || 'User'}
+        subtitle="Government Schemes Portal Member"
+        location={user?.city && user?.state ? `${user.city}, ${user.state}` : undefined}
+        id={user?.phoneNumber?.slice(-4) || undefined}
+        completion={profileCompletion}
+        showCompletion={true}
+      />
+
+      {/* Save Status */}
+      {saveStatus && (
+        <div className="bg-green-50 border-l-4 border-green-400 p-4">
+          <div className="flex items-center">
+            <Icons.Check className="w-5 h-5 text-green-400 mr-2" />
+            <span className="text-green-800">{saveStatus}</span>
           </div>
         </div>
+      )}
 
-        {/* Profile Completion Card */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50 p-6 hover:bg-white/90 transition-all duration-300">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-xl font-bold text-gray-900">Profile Completion</h3>
-              <p className="text-gray-600">Complete your profile to get better scheme recommendations</p>
-            </div>
-            <div className="text-right">
-              <div className={`text-3xl font-bold ${getCompletionColor(profileCompletion)}`}>
-                {profileCompletion}%
-              </div>
-              <div className="text-sm text-gray-500">Complete</div>
-            </div>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-3">
-            <div 
-              className={`h-3 rounded-full ${getCompletionBgColor(profileCompletion)} transition-all duration-500`}
-              style={{ width: `${profileCompletion}%` }}
-            ></div>
-          </div>
-          <div className="mt-4 text-sm text-gray-600">
-            {profileCompletion < 100 ? 'Fill in missing information to improve your eligibility matching' : 'Your profile is complete! You\'ll get the best scheme recommendations.'}
-          </div>
+      {/* Navigation Tabs */}
+      <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50 overflow-hidden hover:bg-white/90 transition-all duration-300">
+        <div className="border-b border-gray-200/50">
+          <nav className="flex overflow-x-auto">
+            {sections.map((section) => (
+              <button
+                key={section.id}
+                onClick={() => setActiveSection(section.id)}
+                className={`flex items-center space-x-2 py-4 px-6 text-sm font-medium transition-colors duration-200 whitespace-nowrap ${
+                  activeSection === section.id
+                    ? 'text-blue-600 bg-blue-50/80 border-b-2 border-blue-600'
+                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50/80'
+                }`}
+              >
+                <section.icon className="w-4 h-4" />
+                <span>{section.label}</span>
+              </button>
+            ))}
+          </nav>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50 overflow-hidden hover:bg-white/90 transition-all duration-300">
-          <div className="border-b border-gray-200/50">
-            <nav className="flex">
-              {sections.map((section) => (
-                <button
-                  key={section.id}
-                  onClick={() => setActiveSection(section.id)}
-                  className={`flex-1 py-4 px-6 text-sm font-medium transition-colors duration-200 ${
-                    activeSection === section.id
-                      ? 'text-blue-600 bg-blue-50/80 border-b-2 border-blue-600'
-                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50/80'
-                  }`}
-                >
-                  <span className="text-lg mr-2">{section.icon}</span>
-                  {section.label}
-                </button>
-              ))}
-            </nav>
-          </div>
-
-          {/* Profile Content */}
-          <div className="p-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {profileSections
-                .filter(section => section.id === activeSection)
-                .map((section, index) => (
-                  <div key={index} className="lg:col-span-2">
-                    <div className="bg-gray-50/80 backdrop-blur-sm rounded-xl p-6 border border-gray-200/50 hover:bg-gray-50/90 transition-all duration-300">
-                      <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-xl font-bold text-gray-900 flex items-center">
-                          <span className="text-2xl mr-3">{section.icon}</span>
-                          {section.title}
-                        </h3>
-                        <button
-                          onClick={() => setIsEditing(!isEditing)}
-                          className="text-blue-600 hover:text-blue-700 font-medium hover:underline"
-                        >
-                          {isEditing ? 'Cancel' : 'Edit'}
-                        </button>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {section.items.map((item, itemIndex) => (
-                          <div key={itemIndex} className="bg-white/80 backdrop-blur-sm rounded-lg p-4 shadow-sm hover:bg-white transition-all duration-200">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center space-x-3">
-                                <span className="text-lg">{item.icon}</span>
-                                <div>
-                                  <div className="flex items-center space-x-2">
-                                    <span className="text-sm font-medium text-gray-600">{item.label}</span>
-                                    {item.required && (
-                                      <span className="text-red-500 text-xs">*</span>
-                                    )}
-                                  </div>
-                                  <div className="text-sm text-gray-900 font-medium mt-1">
-                                    {item.value}
-                                  </div>
-                                </div>
-                              </div>
-                              {item.value === 'Not specified' || item.value === 'Not provided' ? (
-                                <span className="text-red-500 text-xs bg-red-50 px-2 py-1 rounded-full">
-                                  Missing
-                                </span>
-                              ) : (
-                                <span className="text-green-500 text-xs bg-green-50 px-2 py-1 rounded-full">
-                                  ✓ Complete
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50 p-6 hover:bg-white/90 transition-all duration-300">
-          <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
-            <span className="text-2xl mr-3">⚡</span>
-            Quick Actions
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Link to="/schemes" className="group p-6 bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 rounded-xl transition-all duration-300 text-left border border-blue-200 hover:border-blue-300 transform hover:scale-105">
-              <div className="flex items-center mb-3">
-                <span className="text-3xl mr-3">🎯</span>
-                <h4 className="font-bold text-blue-900">Check Eligibility</h4>
-              </div>
-              <p className="text-sm text-blue-700">See which schemes you're eligible for</p>
-            </Link>
-            
-            <Link to="/documents" className="group p-6 bg-gradient-to-r from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 rounded-xl transition-all duration-300 text-left border border-green-200 hover:border-green-300 transform hover:scale-105">
-              <div className="flex items-center mb-3">
-                <span className="text-3xl mr-3">📄</span>
-                <h4 className="font-bold text-green-900">View Documents</h4>
-              </div>
-              <p className="text-sm text-green-700">Access your government documents</p>
-            </Link>
-            
-            <Link to="/dashboard" className="group p-6 bg-gradient-to-r from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 rounded-xl transition-all duration-300 text-left border border-purple-200 hover:border-purple-300 transform hover:scale-105">
-              <div className="flex items-center mb-3">
-                <span className="text-3xl mr-3">📊</span>
-                <h4 className="font-bold text-purple-900">Dashboard</h4>
-              </div>
-              <p className="text-sm text-purple-700">View your activity overview</p>
-            </Link>
-          </div>
+        {/* Content */}
+        <div className="p-6">
+          {activeSection === 'personal' && renderPersonalSection()}
+          {activeSection === 'location' && renderLocationSection()}
+          {activeSection === 'professional' && renderProfessionalSection()}
+          {activeSection === 'documents' && renderDocumentsSection()}
+          {activeSection === 'settings' && renderSettingsSection()}
+          {activeSection === 'security' && renderSecuritySection()}
+          {activeSection === 'notifications' && renderNotificationsSection()}
+          {activeSection === 'privacy' && renderPrivacySection()}
         </div>
       </div>
     </div>

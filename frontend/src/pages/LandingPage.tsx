@@ -1,35 +1,36 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Icons } from '../components/ui/Icons';
 
 const LandingPage: React.FC = () => {
   const features = [
     {
-      icon: <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center hover:bg-blue-100 transition-colors duration-200"><svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg></div>,
+      icon: <Icons.Dashboard className="w-12 h-12 text-blue-600" />,
       title: 'Unified Dashboard',
       description: 'Access all government schemes and manage your official documents from one centralized platform.'
     },
     {
-      icon: <div className="w-12 h-12 bg-orange-50 rounded-lg flex items-center justify-center hover:bg-orange-100 transition-colors duration-200"><svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></div>,
+      icon: <Icons.Documents className="w-12 h-12 text-orange-600" />,
       title: 'Document Management',
       description: 'Securely store and view your Aadhaar Card, PAN Card, Driving License, and Passport in digital format.'
     },
     {
-      icon: <div className="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center hover:bg-purple-100 transition-colors duration-200"><svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg></div>,
+      icon: <Icons.Star className="w-12 h-12 text-purple-600" />,
       title: 'Smart Eligibility',
       description: 'AI-powered scheme matching based on your profile, documents, and eligibility criteria with detailed reasons.'
     },
     {
-      icon: <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center hover:bg-green-100 transition-colors duration-200"><svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>,
+      icon: <Icons.Check className="w-12 h-12 text-green-600" />,
       title: 'Instant Verification',
       description: 'Quick document verification and eligibility checking with real-time feedback and recommendations.'
     },
     {
-      icon: <div className="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center hover:bg-indigo-100 transition-colors duration-200"><svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg></div>,
+      icon: <Icons.Smartphone className="w-12 h-12 text-indigo-600" />,
       title: 'Mobile-First Design',
       description: 'Responsive design that works seamlessly on all devices with offline document access.'
     },
     {
-      icon: <div className="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center hover:bg-red-100 transition-colors duration-200"><svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg></div>,
+      icon: <Icons.Shield className="w-12 h-12 text-red-600" />,
       title: 'Bank-Level Security',
       description: 'OTP authentication, encrypted document storage, and secure data handling for your peace of mind.'
     }
@@ -66,7 +67,7 @@ const LandingPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white font-sans">
       {/* Navigation */}
       <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -291,35 +292,28 @@ const LandingPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-sm border border-gray-200/50 hover:shadow-lg hover:bg-white transition-all duration-200 text-center">
               <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4a2 2 0 012-2h12a2 2 0 012 2v16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 8h8M8 12h8M8 16h4" />
-                  <circle cx="12" cy="6" r="1" fill="currentColor" />
-                  <circle cx="10" cy="9" r="0.5" fill="currentColor" />
-                  <circle cx="14" cy="9" r="0.5" fill="currentColor" />
-                  <circle cx="12" cy="13" r="0.5" fill="currentColor" />
-                </svg>
+                <Icons.Aadhaar className="w-8 h-8 text-blue-600" />
               </div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">Aadhaar Card</h3>
               <p className="text-gray-600 text-sm">Digital access to your Aadhaar with complete details and verification status</p>
             </div>
             <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-sm border border-gray-200/50 hover:shadow-lg hover:bg-white transition-all duration-200 text-center">
               <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">💳</span>
+                <Icons.PAN className="w-8 h-8 text-green-600" />
               </div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">PAN Card</h3>
               <p className="text-gray-600 text-sm">Instant access to your PAN details for tax-related schemes and applications</p>
             </div>
             <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-sm border border-gray-200/50 hover:shadow-lg hover:bg-white transition-all duration-200 text-center">
               <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🚗</span>
+                <Icons.DrivingLicense className="w-8 h-8 text-purple-600" />
               </div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">Driving License</h3>
               <p className="text-gray-600 text-sm">Digital DL with vehicle class info for transport-related schemes</p>
             </div>
             <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-sm border border-gray-200/50 hover:shadow-lg hover:bg-white transition-all duration-200 text-center">
               <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">📕</span>
+                <Icons.Passport className="w-8 h-8 text-red-600" />
               </div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">Passport</h3>
               <p className="text-gray-600 text-sm">Passport details for international schemes and identity verification</p>

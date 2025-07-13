@@ -4,8 +4,10 @@ import { Scheme } from '../types';
 import { Link } from 'react-router-dom';
 import Loading from '../components/Loading';
 import EligibilityCard from '../components/EligibilityCard';
+import { useAuth } from '../contexts/AuthContext';
 
 const Schemes: React.FC = () => {
+  const { user } = useAuth();
   const [schemes, setSchemes] = useState<Scheme[]>([]);
   const [eligibilityResults, setEligibilityResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -116,30 +118,10 @@ const Schemes: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Enhanced Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-6 text-white shadow-lg">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold mb-2">Government Schemes</h1>
-            <p className="text-blue-100">
-              {viewMode === 'eligibility' 
-                ? 'Discover schemes personalized for your eligibility' 
-                : 'Discover government schemes designed to help you'}
-            </p>
-          </div>
-          <div className="hidden md:flex items-center space-x-4">
-            <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-              <span className="text-2xl">📋</span>
-            </div>
-            {viewMode === 'eligibility' && (
-              <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-                <span className="text-2xl">✅</span>
-              </div>
-            )}
-          </div>
-        </div>
+      <div className="pt-2 pb-4">
+        <h1 className="text-3xl font-bold text-gray-900 mb-1">Schemes</h1>
+        <p className="text-gray-600 text-base">Discover government schemes personalized for you</p>
       </div>
-
       {/* Error Message */}
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">

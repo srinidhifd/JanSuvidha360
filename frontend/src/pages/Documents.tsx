@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import UserProfileHeaderCard from '../components/UserProfileHeaderCard';
 
 interface DocumentType {
   id: string;
@@ -19,7 +20,8 @@ interface DocumentType {
 const Documents: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [selectedView, setSelectedView] = useState<'overview' | 'document'>('overview');
+  const { type } = useParams();
+  const [selectedView, setSelectedView] = useState<'overview' | 'document'>(type ? 'document' : 'overview');
   const [currentDocument, setCurrentDocument] = useState<DocumentType | null>(null);
 
   // Mock user document status - in real app, this would come from API
@@ -27,26 +29,26 @@ const Documents: React.FC = () => {
     aadhaar: true,
     pan: true,
     driving: true,
-    passport: false, // User doesn't have passport
+    passport: true, // Ensure at least one travel document
     voter: true,
     ration: true,
     pf: true,
     bank: true,
-    insurance: false, // User doesn't have health insurance
-    lic: false,
-    income: false,
-    caste: false,
+    insurance: true, // Add insurance
+    lic: true, // Add LIC
+    income: true, // Add income
+    caste: true, // Add caste
     domicile: true,
     birth: true,
-    marriage: false,
-    property: false,
+    marriage: true, // Add marriage
+    property: true, // Add property
     electricity: true,
     water: true,
     gas: true,
     phone: true,
-    gst: false,
-    trade: false,
-    fssai: false,
+    gst: true, // Add business
+    trade: true, // Add business
+    fssai: true, // Add business
     pollution: true,
     vehicle: true,
     vehicle_insurance: true
@@ -290,6 +292,132 @@ const Documents: React.FC = () => {
       bgColor: 'bg-cyan-50',
       textColor: 'text-cyan-700',
       hasDocument: userDocuments.vehicle_insurance
+    },
+    {
+      id: 'insurance',
+      name: 'Health Insurance',
+      category: 'Insurance',
+      icon: '🏥',
+      shortDetails: [
+        { label: 'Policy No', value: 'HI123456789' },
+        { label: 'Insurer', value: 'LIC' },
+        { label: 'Status', value: 'Active' }
+      ],
+      bgColor: 'bg-pink-50',
+      textColor: 'text-pink-700',
+      hasDocument: userDocuments.insurance
+    },
+    {
+      id: 'lic',
+      name: 'LIC Policy',
+      category: 'Insurance',
+      icon: '🛡️',
+      shortDetails: [
+        { label: 'Policy No', value: 'LIC123456' },
+        { label: 'Holder', value: user?.name || 'Ramesh Kumar' },
+        { label: 'Status', value: 'Active' }
+      ],
+      bgColor: 'bg-yellow-50',
+      textColor: 'text-yellow-700',
+      hasDocument: userDocuments.lic
+    },
+    {
+      id: 'income',
+      name: 'Income Certificate',
+      category: 'Certificate',
+      icon: '📄',
+      shortDetails: [
+        { label: 'Certificate No', value: 'IC2024/12345' },
+        { label: 'Issued By', value: 'Govt. of India' },
+        { label: 'Valid Till', value: '31-03-2025' }
+      ],
+      bgColor: 'bg-green-50',
+      textColor: 'text-green-700',
+      hasDocument: userDocuments.income
+    },
+    {
+      id: 'caste',
+      name: 'Caste Certificate',
+      category: 'Certificate',
+      icon: '📜',
+      shortDetails: [
+        { label: 'Certificate No', value: 'CC2024/12345' },
+        { label: 'Caste', value: 'OBC' },
+        { label: 'Issued By', value: 'Govt. of India' }
+      ],
+      bgColor: 'bg-orange-50',
+      textColor: 'text-orange-700',
+      hasDocument: userDocuments.caste
+    },
+    {
+      id: 'marriage',
+      name: 'Marriage Certificate',
+      category: 'Certificate',
+      icon: '💍',
+      shortDetails: [
+        { label: 'Certificate No', value: 'MC2024/12345' },
+        { label: 'Spouse', value: 'Sita Kumari' },
+        { label: 'Issued By', value: 'Govt. of India' }
+      ],
+      bgColor: 'bg-purple-50',
+      textColor: 'text-purple-700',
+      hasDocument: userDocuments.marriage
+    },
+    {
+      id: 'property',
+      name: 'Property Registration',
+      category: 'Property',
+      icon: '🏠',
+      shortDetails: [
+        { label: 'Registration No', value: 'PR2024/12345' },
+        { label: 'Owner', value: user?.name || 'Ramesh Kumar' },
+        { label: 'Location', value: user?.city || 'Mumbai' }
+      ],
+      bgColor: 'bg-blue-50',
+      textColor: 'text-blue-700',
+      hasDocument: userDocuments.property
+    },
+    {
+      id: 'gst',
+      name: 'GST Registration',
+      category: 'Business',
+      icon: '🧾',
+      shortDetails: [
+        { label: 'GSTIN', value: '27ABCDE1234F1Z5' },
+        { label: 'Business Name', value: 'Kumar Enterprises' },
+        { label: 'Status', value: 'Active' }
+      ],
+      bgColor: 'bg-yellow-50',
+      textColor: 'text-yellow-700',
+      hasDocument: userDocuments.gst
+    },
+    {
+      id: 'trade',
+      name: 'Trade License',
+      category: 'Business',
+      icon: '🏢',
+      shortDetails: [
+        { label: 'License No', value: 'TL2024/12345' },
+        { label: 'Business Name', value: 'Kumar Enterprises' },
+        { label: 'Valid Till', value: '31-03-2025' }
+      ],
+      bgColor: 'bg-green-50',
+      textColor: 'text-green-700',
+      hasDocument: userDocuments.trade
+    },
+    {
+      id: 'fssai',
+      name: 'FSSAI License',
+      category: 'Business',
+      icon: '🍽️',
+      shortDetails: [
+        { label: 'License No', value: 'FSSAI2024/12345' },
+        { label: 'Business Name', value: 'Kumar Foods' },
+        { label: 'Valid Till', value: '31-03-2025' }
+      ],
+      bgColor: 'bg-pink-50',
+      textColor: 'text-pink-700',
+      hasDocument: userDocuments.fssai
     }
   ];
 
@@ -3068,7 +3196,41 @@ const Documents: React.FC = () => {
     }
   };
 
-  if (selectedView === 'document' && currentDocument) {
+  useEffect(() => {
+    if (type) {
+      const doc = documents.find(d => d.id === type);
+      if (doc && doc.hasDocument) {
+        setCurrentDocument(doc);
+        setSelectedView('document');
+      } else {
+        setCurrentDocument(null);
+        setSelectedView('document');
+      }
+    } else {
+      setSelectedView('overview');
+      setCurrentDocument(null);
+    }
+    // eslint-disable-next-line
+  }, [type]);
+
+  if (selectedView === 'document') {
+    if (!currentDocument) {
+      return (
+        <div className="max-w-2xl mx-auto text-center py-16">
+          <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <span className="text-3xl">📄</span>
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">No Document Found</h3>
+          <p className="text-gray-600 mb-4">You do not have this document or it does not exist.</p>
+          <button
+            onClick={() => navigate('/documents')}
+            className="text-blue-600 hover:text-blue-700 font-medium hover:underline"
+          >
+            Back to Documents
+          </button>
+        </div>
+      );
+    }
     return (
       <div className="space-y-6">
         {/* Back Button */}
@@ -3083,12 +3245,10 @@ const Documents: React.FC = () => {
           <div className="text-gray-400">|</div>
           <h1 className="text-2xl font-bold text-gray-900">{currentDocument.name}</h1>
         </div>
-
         {/* Document Detail */}
         <div className="bg-gray-50 rounded-xl p-8">
           {renderDetailedDocument(currentDocument)}
         </div>
-
         {/* Document Actions */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="text-center">
@@ -3113,23 +3273,10 @@ const Documents: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-6 text-white shadow-lg">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold mb-2">My Government Documents</h1>
-            <p className="text-blue-100">
-              {availableDocuments.length} documents available • Only showing documents you have
-            </p>
-          </div>
-          <div className="hidden md:flex items-center space-x-4">
-            <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-              <span className="text-2xl">📄</span>
-            </div>
-          </div>
-        </div>
+      <div className="pt-2 pb-4">
+        <h1 className="text-3xl font-bold text-gray-900 mb-1">Documents</h1>
+        <p className="text-gray-600 text-base">View and manage your government documents</p>
       </div>
-
       {/* Category Filter */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <h2 className="text-lg font-bold text-gray-900 mb-4">Filter by Category</h2>
