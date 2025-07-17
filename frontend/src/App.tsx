@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { AccessibilityProvider } from './contexts/AccessibilityContext';
 import Layout from './components/Layout';
@@ -25,37 +25,112 @@ const App: React.FC = () => {
   return (
     <AuthProvider>
       <AccessibilityProvider>
-        <Router>
+        <BrowserRouter>
           <div className="min-h-screen bg-gray-50">
             <Routes>
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/*" element={
+              <Route path="/dashboard" element={
                 <ProtectedRoute>
                   <Layout>
-                    <Routes>
-                      <Route path="/dashboard" element={<Dashboard />} />
-                      <Route path="/schemes" element={<Schemes />} />
-                      <Route path="/schemes/:id" element={<SchemeDetails />} />
-                      <Route path="/documents" element={<Documents />} />
-                      <Route path="/document-manager" element={<DocumentManager />} />
-                      <Route path="/profile" element={<Profile />} />
-                      <Route path="/applications" element={<ApplicationStatus />} />
-                      <Route path="/notifications" element={<Notifications />} />
-                      <Route path="/search" element={<SearchResults />} />
-                      <Route path="/comparison" element={<SchemeComparison />} />
-                      <Route path="/favorites" element={<Favorites />} />
-                      <Route path="/privacy" element={<PrivacyPolicy />} />
-                      <Route path="/analytics" element={<Analytics />} />
-                      <Route path="/language-settings" element={<LanguageSettings />} />
-                      <Route path="/" element={<Dashboard />} />
-                    </Routes>
+                    <Dashboard />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/schemes" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Schemes />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/schemes/:id" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <SchemeDetails />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/documents" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Documents />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/document-manager" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <DocumentManager />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Profile />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/applications" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <ApplicationStatus />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/notifications" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Notifications />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/search" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <SearchResults />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/comparison" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <SchemeComparison />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/favorites" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Favorites />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/privacy" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <PrivacyPolicy />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/analytics" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Analytics />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/language-settings" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <LanguageSettings />
                   </Layout>
                 </ProtectedRoute>
               } />
             </Routes>
           </div>
-        </Router>
+        </BrowserRouter>
       </AccessibilityProvider>
     </AuthProvider>
   );

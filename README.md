@@ -5,20 +5,22 @@ A comprehensive platform that aggregates government schemes and shows users what
 ## Features
 
 - **Phone-based Authentication**: Secure login using phone numbers and OTP
-- **User Profile Management**: Complete user profiles with Aadhaar integration
+- **User Profile Management**: Complete user profiles with document management
 - **Scheme Eligibility**: Intelligent eligibility checking based on age, income, occupation, and other criteria
 - **Clean Dashboard**: Single-screen view of all eligible schemes
-- **Responsive Design**: Clean, modern UI with white and muted color theme
+- **Responsive Design**: Clean, modern UI with government theme
 - **Real Government Schemes**: Includes popular schemes like PM-KISAN, Ayushman Bharat, PMAY, etc.
+- **Document Management**: Secure storage and viewing of Aadhaar, PAN, Driving License, and Passport
 
 ## Tech Stack
 
 ### Frontend
-- React.js 18 with TypeScript
-- React Router for navigation
+- React.js 19 with TypeScript
+- React Router v6 for navigation
 - Axios for API calls
 - React Hot Toast for notifications
-- CSS3 with custom design system
+- Tailwind CSS for styling
+- Lucide React for icons
 
 ### Backend
 - Node.js with Express.js
@@ -30,15 +32,16 @@ A comprehensive platform that aggregates government schemes and shows users what
 ## Project Structure
 
 ```
-government-schemes-aggregator/
+JanSuvidha360/
 ├── frontend/                 # React.js frontend
 │   ├── src/
 │   │   ├── components/       # Reusable UI components
-│   │   ├── contexts/         # React contexts (Auth, etc.)
+│   │   │   └── ui/          # Design system components
+│   │   ├── contexts/         # React contexts (Auth, Accessibility)
 │   │   ├── pages/           # Page components
 │   │   ├── services/        # API service layer
 │   │   ├── types/           # TypeScript type definitions
-│   │   └── utils/           # Utility functions
+│   │   └── design-system/   # Design tokens and utilities
 │   ├── public/              # Static assets
 │   └── package.json
 ├── backend/                 # Node.js backend
@@ -49,7 +52,7 @@ government-schemes-aggregator/
 │   │   ├── services/        # Business logic
 │   │   └── types/           # TypeScript types
 │   └── package.json
-└── package.json            # Root package.json
+└── package.json            # Root package.json (workspace)
 ```
 
 ## Getting Started
@@ -63,7 +66,7 @@ government-schemes-aggregator/
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd government-schemes-aggregator
+   cd JanSuvidha360
    ```
 
 2. **Install dependencies**
@@ -151,11 +154,13 @@ The system checks eligibility based on:
 ## Design System
 
 The UI follows a clean, modern design with:
-- **Primary Colors**: Indigo/Purple shades
+- **Primary Colors**: Blue/Indigo shades (government theme)
+- **Secondary Colors**: Saffron (Indian flag colors)
 - **Background**: White and light gray tones
-- **Typography**: System font stack
+- **Typography**: System font stack with Hindi support
 - **Components**: Cards, buttons, forms with consistent spacing
 - **Responsive**: Mobile-first design approach
+- **Accessibility**: High contrast mode, font size controls
 
 ## Development
 
